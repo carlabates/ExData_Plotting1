@@ -1,0 +1,17 @@
+library(data.table)
+epc <- read.table("household_power_consumption.txt", header=TRUE, sep=";", stringsAsFactors=FALSE)
+epcDT <- data.table(epc)
+epc <- c()
+epcData <- epcDT[Date==c("1/2/2007","2/2/2007"),]
+epcX<- epcData[ , daytime:=as.POSIXct(paste(epcData$Date, epcData$Time), format = "%d/%m/%Y %H:%M:%S")]
+par(mfrow=c(2,2), pch="|")
+with(epcX, plot(daytime, Global_active_power, type="l", xlab="", ylab="Global Active Power", cex.lab=.7, cex.axis=.8))
+with(epcX, plot(daytime, Voltage, type="l", xlab="datetime"))
+with(epcX, plot(daytime, Sub_metering_1, type="n", xlab="datetime", ylab="Energy Sub Metering"))
+with(subset(epcX), points(daytime, Sub_metering_1, type="l", ylim=c(0,30)))
+with(subset(epcX), points(daytime, Sub_metering_3, type="l", ylim=c(0,30), col="blue", lwd=".5"))
+with(subset(epcX), points(daytime, Sub_metering_2, type="l", ylim=c(0,30), col="red", lwd=".5"))
+legend("topright", c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), cex=0.8, lty=c(1,1,1), col=c("black","blue","red"))
+with(epcX, plot(daytime, Global_reactive_power, type="l", xlab="datetime"))
+dev.copy(png, file = "plot5.png", width=480, height=480, res=55) 
+dev.off()

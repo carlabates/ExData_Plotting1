@@ -1,0 +1,15 @@
+library(data.table)
+epc <- read.table("household_power_consumption.txt", header=TRUE, sep=";", stringsAsFactors=FALSE)
+epcDT <- data.table(epc)
+epc <- c()
+epcData <- epcDT[Date==c("1/2/2007","2/2/2007"),]
+epcDT <- c()
+epcX <- epcData[ , daytime:=as.POSIXct(paste(epcData$Date, epcData$Time), format = "%d/%m/%Y %H:%M:%S")]
+par(pch="|")
+with(epcX, plot(daytime, Sub_metering_1, type="n", xlab="", ylab="Energy Sub Metering"))
+with(subset(epcX), points(daytime, Sub_metering_1, type="l", ylim=c(0,30)))
+with(subset(epcX), points(daytime, Sub_metering_3, type="l", ylim=c(0,30), col="blue", lwd=".5"))
+with(subset(epcX), points(daytime, Sub_metering_2, type="l", ylim=c(0,30), col="red", lwd=".5"))
+legend("topright", c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), cex=0.8, lty=c(1,1,1), col=c("black","blue","red"))
+dev.copy(png, file = "plot3.png", width=480, height=480, res=55) 
+dev.off()
